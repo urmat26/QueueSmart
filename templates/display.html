@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Табло очереди — QueueSmart{% endblock %}
+
+{% block content %}
+<div class="display-page">
+    <div class="display-header">
+        <div class="display-logo">⚡ QueueSmart</div>
+        <div class="display-clock" id="displayClock">--:--:--</div>
+    </div>
+
+    <div class="display-grid">
+        <div class="display-section display-now-serving">
+            <h2 class="display-section-title">🔔 Сейчас обслуживаются</h2>
+            <div class="serving-cards" id="servingCards">
+                <div class="serving-empty">Нет активных вызовов</div>
+            </div>
+        </div>
+
+        <div class="display-section display-waiting">
+            <h2 class="display-section-title">⏳ Ожидают</h2>
+            <div class="waiting-list" id="waitingList">
+                <div class="serving-empty">Очередь пуста</div>
+            </div>
+            <div class="waiting-total">
+                Всего ожидают: <span id="totalWaiting">0</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function updateClock() {
+    const now = new Date();
+    document.getElementById('displayClock').textContent = now.toLocaleTimeString('ru-RU');
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+async function loadDisplay() {
+    try {
+        const res = await fetch('/api/display');
+        const data = await res.json();
+
+        // Now serving
+        const servingEl = document.getElementById('servingCards');
+        const activeWindows = data.windows.filter(w => w.current_ticket);
+        if (activeWindows.length === 0) {
+            servingEl.innerHTML = '<div class="serving-empty">Нет активных вызовов</div>';
+        } else {
+            servingEl.innerHTML = activeWindows.map(w => `
+                <div class="serving-card animate-pulse-border">
+                    <div class="serving-window">${w.name}</div>
+                    <div class="serving-number">${w.current_ticket.ticket_number}</div>
+                    <div class="serving-name">${w.current_ticket.client_name}</div>
+                    <div class="serving-service">${w.current_ticket.service_icon} ${w.current_ticket.service_name}</div>
+                </div>
+            `).join('');
+        }
+
+        // Waiting
+        const waitEl = document.getElementById('waitingList');
+        if (data.waiting.length === 0) {
+            waitEl.innerHTML = '<div class="serving-empty">Очередь пуста</div>';
+        } else {
+            waitEl.innerHTML = data.waiting.map(t => `
+                <div class="waiting-item">
+                    <span class="waiting-num">${t.ticket_number}</span>
+                    <span class="waiting-name">${t.client_name}</span>
+                    <span class="waiting-service">${t.service_icon}</span>
+                </div>
+            `).join('');
+        }
+        document.getElementById('totalWaiting').textContent = data.total_waiting;
+    } catch(e) { console.error(e); }
+}
+
+loadDisplay();
+setInterval(loadDisplay, 3000);
+
+// Socket.IO for real-time
+try {
+    const socket = io();
+    socket.on('queue_update', () => loadDisplay());
+} catch(e) {}
+</script>
+{% endblock %}

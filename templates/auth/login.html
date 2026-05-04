@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Вход — QueueSmart{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card card">
+        <div class="card-header">
+            <h2>🔐 Вход в систему</h2>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                <div class="form-group">
+                    <label class="form-label" for="username">Имя пользователя</label>
+                    <input type="text" id="username" name="username" class="form-input" required placeholder="Введите ваш логин">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="password">Пароль</label>
+                    <input type="password" id="password" name="password" class="form-input" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block btn-lg">Войти</button>
+            </form>
+            <div class="auth-footer">
+                <p>Нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
+                <p class="text-muted" style="margin-top:1rem; font-size:0.8rem">Для теста админа: admin / admin123</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

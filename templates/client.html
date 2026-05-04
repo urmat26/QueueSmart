@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Записаться в очередь — QueueSmart{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <span class="section-badge">Быстрая запись</span>
+        <h1 class="page-title">Записаться в <span class="gradient-text">очередь</span></h1>
+        <p class="page-subtitle">Выберите услугу и займите место</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="client-layout" id="registrationSection">
+        <div class="card card-form">
+            <div class="card-header"><h2>📝 Заполните данные</h2></div>
+            <div class="card-body">
+                <form id="registerForm" onsubmit="registerInQueue(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="clientName">Ваше имя</label>
+                        <input type="text" id="clientName" class="form-input" placeholder="Введите имя" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="clientPhone">Телефон</label>
+                        <input type="tel" id="clientPhone" class="form-input" placeholder="+7 (___) ___-__-__">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Услуга</label>
+                        <div class="service-cards" id="serviceCards"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg btn-block" id="submitBtn">
+                        <span>Встать в очередь</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="card card-info">
+            <div class="card-header"><h2>📊 Текущая очередь</h2></div>
+            <div class="card-body">
+                <div class="queue-mini-stats">
+                    <div class="mini-stat"><span class="mini-stat-value" id="miniWaiting">0</span><span class="mini-stat-label">Ожидают</span></div>
+                    <div class="mini-stat"><span class="mini-stat-value" id="miniServing">0</span><span class="mini-stat-label">Обслуживаются</span></div>
+                    <div class="mini-stat"><span class="mini-stat-value" id="miniAvgWait">~0 мин</span><span class="mini-stat-label">Ожидание</span></div>
+                </div>
+                <div class="queue-list-mini" id="queueListMini"><p class="text-muted">Загрузка...</p></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ticket-result hidden" id="ticketResult">
+        <div class="ticket-card">
+            <div class="ticket-success-icon">✅</div>
+            <h2>Вы записаны!</h2>
+            <div class="ticket-number-display">
+                <span class="ticket-label">Ваш номер</span>
+                <span class="ticket-number" id="resultTicketNumber">—</span>
+            </div>
+            <div class="ticket-details">
+                <div class="ticket-detail"><span class="detail-label">Услуга</span><span class="detail-value" id="resultService">—</span></div>
+                <div class="ticket-detail"><span class="detail-label">Позиция</span><span class="detail-value" id="resultPosition">—</span></div>
+                <div class="ticket-detail"><span class="detail-label">Ожидание</span><span class="detail-value" id="resultWait">—</span></div>
+            </div>
+            <div class="ticket-tracking">
+                <p>Токен для отслеживания:</p>
+                <div class="tracking-link" id="trackingLink"></div>
+            </div>
+            <div class="ticket-actions">
+                <button class="btn btn-glass" onclick="showRegistration()">Записать ещё</button>
+                <a href="/display" class="btn btn-primary">Смотреть табло</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-track" style="margin-top:2rem">
+        <div class="card-header"><h2>🔍 Проверить статус</h2></div>
+        <div class="card-body">
+            <div class="track-form">
+                <input type="text" id="trackToken" class="form-input" placeholder="Вставьте токен...">
+                <button class="btn btn-primary" onclick="trackTicket()">Проверить</button>
+            </div>
+            <div class="track-result hidden" id="trackResult"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/client.js') }}"></script>
+{% endblock %}

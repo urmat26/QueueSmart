@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="QueueSmart — умная система управления очередями">
+    <title>{% block title %}QueueSmart{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">QueueSmart</span>
+            </a>
+            <div class="nav-links">
+                <a href="/" class="nav-link {% if request.endpoint == 'page_index' %}active{% endif %}">Главная</a>
+                <a href="/client" class="nav-link {% if request.endpoint == 'page_client' %}active{% endif %}">Записаться</a>
+                <a href="/display" class="nav-link {% if request.endpoint == 'page_display' %}active{% endif %}">Табло</a>
+                
+                {% if current_user.is_authenticated %}
+                    {% if current_user.role == 'admin' %}
+                        <a href="/admin" class="nav-link {% if request.endpoint == 'page_admin' %}active{% endif %}">Админ</a>
+                        <a href="/analytics" class="nav-link {% if request.endpoint == 'page_analytics' %}active{% endif %}">Аналитика</a>
+                    {% endif %}
+                    <a href="/profile" class="nav-link {% if request.endpoint == 'page_profile' %}active{% endif %}">Кабинет</a>
+                    <a href="/logout" class="nav-link">Выход</a>
+                {% else %}
+                    <a href="/login" class="nav-link {% if request.endpoint == 'page_login' %}active{% endif %}">Вход</a>
+                    <a href="/register" class="nav-link {% if request.endpoint == 'page_register' %}active{% endif %}">Регистрация</a>
+                {% endif %}
+            </div>
+            <button class="nav-burger" id="navBurger" onclick="toggleMobileMenu()">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+        <div class="nav-mobile" id="navMobile">
+            <a href="/" class="nav-link">Главная</a>
+            <a href="/client" class="nav-link">Записаться</a>
+            <a href="/display" class="nav-link">Табло</a>
+            {% if current_user.is_authenticated %}
+                <a href="/profile" class="nav-link">Кабинет</a>
+                <a href="/logout" class="nav-link">Выход</a>
+            {% else %}
+                <a href="/login" class="nav-link">Вход</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-container container">
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>© 2026 QueueSmart — Умная система управления очередями</p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMobileMenu() {
+            document.getElementById('navMobile').classList.toggle('open');
+            document.getElementById('navBurger').classList.toggle('active');
+        }
+    </script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

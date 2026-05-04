@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block title %}QueueSmart — Умное управление очередями{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-bg">
+        <div class="hero-glow glow-1"></div>
+        <div class="hero-glow glow-2"></div>
+        <div class="hero-glow glow-3"></div>
+    </div>
+    <div class="hero-content">
+        <div class="hero-badge">⚡ Система нового поколения</div>
+        <h1 class="hero-title">
+            Умное управление<br>
+            <span class="gradient-text">очередями</span>
+        </h1>
+        <p class="hero-subtitle">
+            QueueSmart — инновационная платформа, которая устраняет ожидание в очередях 
+            с помощью виртуальных очередей, аналитики в реальном времени и умных уведомлений.
+        </p>
+        <div class="hero-actions">
+            <a href="/client" class="btn btn-primary btn-lg">
+                <span>Встать в очередь</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <a href="/display" class="btn btn-glass btn-lg">
+                <span>Смотреть табло</span>
+            </a>
+        </div>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <span class="hero-stat-number" id="heroWaiting">0</span>
+                <span class="hero-stat-label">В очереди</span>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+                <span class="hero-stat-number" id="heroServed">0</span>
+                <span class="hero-stat-label">Обслужено сегодня</span>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+                <span class="hero-stat-number" id="heroAvgWait">0</span>
+                <span class="hero-stat-label">Мин. ожидания (ср.)</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-badge">Возможности</span>
+            <h2 class="section-title">Почему <span class="gradient-text">QueueSmart</span>?</h2>
+            <p class="section-subtitle">Современное решение для управления потоком клиентов</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Виртуальная очередь</h3>
+                <p>Клиенты регистрируются через смартфон и ожидают где угодно, отслеживая свою позицию в реальном времени.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Аналитика</h3>
+                <p>Детальная статистика по времени ожидания, потоку клиентов, пиковым часам и эффективности обслуживания.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔔</div>
+                <h3>Умные уведомления</h3>
+                <p>Автоматические оповещения клиентов о приближении очереди через уведомления в реальном времени.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🖥️</div>
+                <h3>Информационное табло</h3>
+                <p>Настраиваемые дисплеи для отображения текущего состояния очереди, номеров и направлений.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚙️</div>
+                <h3>Гибкая настройка</h3>
+                <p>Множество типов услуг, окон обслуживания и параметров для адаптации под любой бизнес.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <h3>Масштабирование</h3>
+                <p>От небольшого офиса до крупного торгового центра — система растёт вместе с вашим бизнесом.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="how-it-works">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-badge">Процесс</span>
+            <h2 class="section-title">Как это <span class="gradient-text">работает</span>?</h2>
+        </div>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">01</div>
+                <div class="step-content">
+                    <h3>Регистрация</h3>
+                    <p>Клиент выбирает услугу и регистрируется в очереди через веб-интерфейс или киоск.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">02</div>
+                <div class="step-content">
+                    <h3>Ожидание</h3>
+                    <p>Клиент отслеживает свою позицию в реальном времени и получает уведомления.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">03</div>
+                <div class="step-content">
+                    <h3>Вызов</h3>
+                    <p>Оператор вызывает следующего клиента — информация отображается на табло и отправляется в уведомлении.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">04</div>
+                <div class="step-content">
+                    <h3>Обслуживание</h3>
+                    <p>Клиент приходит к окну, получает услугу. Статистика автоматически обновляется.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% block scripts %}
+<script>
+    // Load hero stats
+    async function loadHeroStats() {
+        try {
+            const [queueRes, analyticsRes] = await Promise.all([
+                fetch('/api/queue'),
+                fetch('/api/analytics/today')
+            ]);
+            const queue = await queueRes.json();
+            const analytics = await analyticsRes.json();
+
+            animateNumber('heroWaiting', queue.total_waiting || 0);
+            animateNumber('heroServed', analytics.total_served || 0);
+            animateNumber('heroAvgWait', analytics.avg_wait_time || 0);
+        } catch (e) {
+            console.log('Stats loading...', e);
+        }
+    }
+
+    function animateNumber(id, target) {
+        const el = document.getElementById(id);
+        const start = parseInt(el.textContent) || 0;
+        const duration = 1000;
+        const startTime = performance.now();
+
+        function update(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.round(start + (target - start) * eased);
+            if (progress < 1) requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+    }
+
+    loadHeroStats();
+    setInterval(loadHeroStats, 10000);
+</script>
+{% endblock %}
+{% endblock %}

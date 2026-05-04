@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Регистрация — QueueSmart{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card card">
+        <div class="card-header">
+            <h2>📝 Создать аккаунт</h2>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                <div class="form-group">
+                    <label class="form-label" for="username">Имя пользователя</label>
+                    <input type="text" id="username" name="username" class="form-input" required placeholder="Логин">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="email">Email</label>
+                    <input type="email" id="email" name="email" class="form-input" required placeholder="example@mail.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="password">Пароль</label>
+                    <input type="password" id="password" name="password" class="form-input" required placeholder="Минимум 6 символов">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block btn-lg">Зарегистрироваться</button>
+            </form>
+            <div class="auth-footer">
+                <p>Уже есть аккаунт? <a href="/login">Войти</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

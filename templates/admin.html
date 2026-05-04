@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Панель управления — QueueSmart{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <span class="section-badge">Управление</span>
+        <h1 class="page-title">Панель <span class="gradient-text">администратора</span></h1>
+    </div>
+</div>
+
+<div class="container">
+    <div class="admin-stats" id="adminStats">
+        <div class="stat-card"><div class="stat-icon">⏳</div><div class="stat-value" id="statWaiting">0</div><div class="stat-label">Ожидают</div></div>
+        <div class="stat-card"><div class="stat-icon">🔄</div><div class="stat-value" id="statServing">0</div><div class="stat-label">Обслуживаются</div></div>
+        <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value" id="statServed">0</div><div class="stat-label">Обслужено</div></div>
+        <div class="stat-card"><div class="stat-icon">⏱️</div><div class="stat-value" id="statAvgWait">0</div><div class="stat-label">Ср. ожидание (мин)</div></div>
+    </div>
+
+    <div class="admin-layout">
+        <!-- Windows -->
+        <div class="card">
+            <div class="card-header">
+                <h2>🖥️ Окна обслуживания</h2>
+                <button class="btn btn-sm btn-primary" onclick="addWindow()">+ Окно</button>
+            </div>
+            <div class="card-body" id="windowsList"></div>
+        </div>
+
+        <!-- Queue -->
+        <div class="card">
+            <div class="card-header">
+                <h2>📋 Очередь</h2>
+                <select id="filterService" class="form-select-sm" onchange="loadQueue()">
+                    <option value="">Все услуги</option>
+                </select>
+            </div>
+            <div class="card-body">
+                <div class="queue-tabs">
+                    <button class="tab active" onclick="switchTab('waiting',this)">Ожидают</button>
+                    <button class="tab" onclick="switchTab('serving',this)">Обслуживаются</button>
+                </div>
+                <div id="queueContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Services Management -->
+    <div class="card" style="margin-top:1.5rem">
+        <div class="card-header">
+            <h2>⚙️ Услуги</h2>
+            <button class="btn btn-sm btn-primary" onclick="addService()">+ Услуга</button>
+        </div>
+        <div class="card-body" id="servicesList"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endblock %}

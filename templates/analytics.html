@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Аналитика — QueueSmart{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <span class="section-badge">Статистика</span>
+        <h1 class="page-title">Аналитика и <span class="gradient-text">отчёты</span></h1>
+    </div>
+</div>
+
+<div class="container">
+    <div class="admin-stats" id="analyticsStats">
+        <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-value" id="anServed">0</div><div class="stat-label">Обслужено сегодня</div></div>
+        <div class="stat-card"><div class="stat-icon">❌</div><div class="stat-value" id="anCancelled">0</div><div class="stat-label">Отменено</div></div>
+        <div class="stat-card"><div class="stat-icon">⏱️</div><div class="stat-value" id="anWait">0</div><div class="stat-label">Ср. ожидание (мин)</div></div>
+        <div class="stat-card"><div class="stat-icon">🔄</div><div class="stat-value" id="anServiceTime">0</div><div class="stat-label">Ср. обслуживание (мин)</div></div>
+    </div>
+
+    <div class="charts-grid">
+        <div class="card">
+            <div class="card-header"><h2>📈 Поток клиентов по часам</h2></div>
+            <div class="card-body"><canvas id="hourlyChart"></canvas></div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h2>🍩 По типу услуг</h2></div>
+            <div class="card-body"><canvas id="serviceChart"></canvas></div>
+        </div>
+        <div class="card" style="grid-column: 1 / -1;">
+            <div class="card-header"><h2>📊 За неделю</h2></div>
+            <div class="card-body"><canvas id="weeklyChart"></canvas></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/analytics.js') }}"></script>
+{% endblock %}
