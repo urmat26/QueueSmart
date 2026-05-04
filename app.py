@@ -177,9 +177,12 @@ def init_db():
 if __name__ == '__main__':
     init_db()
     
-    # Start Telegram Bot in background
-    bot_thread = threading.Thread(target=start_bot_polling, daemon=True)
-    bot_thread.start()
+    # Start Telegram Bot in background (only once)
+    import os
+    if os.environ.get('WERKEZEUG_RUN_MAIN') == 'true':
+        bot_thread = threading.Thread(target=start_bot_polling, daemon=True)
+        bot_thread.start()
+        print("[OK] Telegram Bot thread started")
 
     print('\n' + '='*50)
     print('QueueSmart is running!')
