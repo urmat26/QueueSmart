@@ -42,6 +42,15 @@ def page_index():
 def page_client():
     return render_template('client.html')
 
+@app.route('/ticket/<token>')
+def page_ticket(token):
+    from services.queue_service import QueueService
+    ticket = QueueService.get_ticket_by_token(token)
+    if not ticket:
+        flash('Талон не найден', 'error')
+        return redirect(url_for('page_index'))
+    return render_template('ticket_view.html', token=token, ticket=ticket)
+
 @app.route('/admin')
 @login_required
 def page_admin():
@@ -155,10 +164,10 @@ def init_db():
 
         if Service.query.count() == 0:
             services = [
-                Service(name='Obshchiy priyom', description='General questions', estimated_time=10, icon='📋'),
-                Service(name='Finansy', description='Financial operations', estimated_time=15, icon='💰'),
-                Service(name='Dokumenty', description='Document processing', estimated_time=20, icon='📄'),
-                Service(name='VIP', description='Priority service', estimated_time=10, icon='⭐'),
+                Service(name='Общий прием', description='Общие вопросы и консультации', estimated_time=10, icon='📋'),
+                Service(name='Финансовые операции', description='Платежи, переводы и касса', estimated_time=15, icon='💰'),
+                Service(name='Документы', description='Оформление и выдача справок/договоров', estimated_time=20, icon='📄'),
+                Service(name='VIP обслуживание', description='Приоритетное обслуживание для VIP клиентов', estimated_time=10, icon='⭐'),
             ]
             db.session.add_all(services)
             db.session.commit()
@@ -166,9 +175,9 @@ def init_db():
 
         if ServiceWindow.query.count() == 0:
             windows = [
-                ServiceWindow(name='Window 1', operator_name='Operator 1'),
-                ServiceWindow(name='Window 2', operator_name='Operator 2'),
-                ServiceWindow(name='Window 3', operator_name='Operator 3'),
+                ServiceWindow(name='Окно 1', operator_name='Оператор 1'),
+                ServiceWindow(name='Окно 2', operator_name='Оператор 2'),
+                ServiceWindow(name='Окно 3', operator_name='Оператор 3'),
             ]
             db.session.add_all(windows)
             db.session.commit()

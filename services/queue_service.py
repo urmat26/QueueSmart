@@ -100,7 +100,7 @@ class QueueService:
         db.session.commit()
         
         # Send Telegram Notification
-        TelegramService.notify_ticket_called(next_ticket)
+        # TelegramService.notify_ticket_called(next_ticket)
         
         return next_ticket, None
 
@@ -166,7 +166,7 @@ class QueueService:
         db.session.commit()
         
         # Send Telegram Notification
-        TelegramService.notify_ticket_cancelled(ticket)
+        # TelegramService.notify_ticket_cancelled(ticket)
         
         return ticket, None
 

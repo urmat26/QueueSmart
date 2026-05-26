@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: queuesmart
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 app:app
+    envVars:
+      - key: FLASK_APP
+        value: app.py
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: TELEGRAM_BOT_TOKEN
+        value: "" # Опционально для интеграции, если потребуется в будущем

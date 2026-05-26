@@ -300,3 +300,185 @@ h1, h2, h3, h4 { color: var(--text-heading); font-weight: 700; line-height: 1.2;
     .section-title { font-size: 1.8rem; }
     .ticket-number { font-size: 3rem; }
 }
+
+/* ═══ Toast Notifications ═══ */
+.toast-container {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 400px;
+    width: calc(100vw - 48px);
+}
+.toast {
+    background: rgba(18, 18, 24, 0.9);
+    border: 1px solid var(--border);
+    backdrop-filter: var(--glass);
+    padding: 16px 20px;
+    border-radius: var(--radius-md);
+    color: var(--text-heading);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transform: translateX(120%);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s;
+    opacity: 0;
+}
+.toast.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+.toast-success { border-left: 4px solid var(--accent); }
+.toast-error { border-left: 4px solid #ef4444; }
+.toast-warning { border-left: 4px solid #f59e0b; }
+.toast-info { border-left: 4px solid var(--primary-light); }
+.toast-icon { font-size: 1.2rem; }
+.toast-msg { font-size: 0.95rem; font-weight: 500; }
+
+/* ═══ Ticket Share Card ═══ */
+.ticket-share-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    padding: 2rem 1rem;
+    position: relative;
+}
+.ticket-share-container::before {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+    z-index: -1;
+}
+.ticket-share-card {
+    max-width: 480px;
+    width: 100%;
+    background: linear-gradient(135deg, rgba(22, 22, 28, 0.9) 0%, rgba(14, 14, 18, 0.95) 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    overflow: hidden;
+    position: relative;
+    backdrop-filter: var(--glass);
+}
+.ticket-share-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 6px;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+}
+.ticket-share-header {
+    padding: 2.5rem 2.5rem 1.5rem;
+    text-align: center;
+    border-bottom: 1px dashed var(--border);
+}
+.ticket-share-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 1rem;
+}
+.ticket-share-number {
+    font-size: 4.5rem;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+    letter-spacing: -1px;
+    text-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
+}
+.ticket-share-body {
+    padding: 2rem 2.5rem;
+}
+.ticket-share-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+.info-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+.info-block-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.info-block-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-heading);
+}
+.ticket-qr-box {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+.qr-canvas {
+    background: white;
+    padding: 8px;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.qr-label {
+    font-size: 0.8rem;
+    color: var(--text-body);
+    text-align: center;
+}
+.ticket-share-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* Status specific glowing badges */
+.status-badge.status-waiting {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+.status-badge.status-called {
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary-light);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    animation: badgeGlow 1.5s infinite alternate;
+}
+.status-badge.status-serving {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--accent);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+.status-badge.status-completed {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+.status-badge.status-cancelled {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+@keyframes badgeGlow {
+    from { box-shadow: 0 0 5px rgba(99, 102, 241, 0.2); }
+    to { box-shadow: 0 0 15px rgba(99, 102, 241, 0.6); }
+}
+

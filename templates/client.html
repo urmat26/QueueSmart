@@ -61,12 +61,21 @@
                 <div class="ticket-detail"><span class="detail-label">Ожидание</span><span class="detail-value" id="resultWait">—</span></div>
             </div>
             <div class="ticket-tracking">
-                <p>Токен для отслеживания:</p>
-                <div class="tracking-link" id="trackingLink"></div>
+                <p style="margin-bottom:0.75rem; font-weight:600">Ссылка для отслеживания и шэринга:</p>
+                <div class="ticket-qr-box" style="margin-bottom:1rem; background:rgba(255,255,255,0.01)">
+                    <canvas id="resultQrCode" class="qr-canvas"></canvas>
+                    <br>
+                    <span class="qr-label" style="font-size:0.75rem">Отсканируйте, чтобы открыть талон на телефоне</span>
+                </div>
+                <div class="tracking-link" id="trackingLink" style="margin-bottom:1rem"></div>
             </div>
-            <div class="ticket-actions">
-                <button class="btn btn-glass" onclick="showRegistration()">Записать ещё</button>
-                <a href="/display" class="btn btn-primary">Смотреть табло</a>
+            <div class="ticket-actions" style="flex-direction:column; gap:0.5rem">
+                <button class="btn btn-primary btn-block" id="copyShareBtn">Скопировать ссылку</button>
+                <a href="" id="viewTicketBtn" class="btn btn-glass btn-block">Открыть страницу талона</a>
+                <div style="display:flex; gap:1rem; width:100%">
+                    <button class="btn btn-glass" style="flex:1" onclick="showRegistration()">Записать ещё</button>
+                    <a href="/display" class="btn btn-glass" style="flex:1">Смотреть табло</a>
+                </div>
             </div>
         </div>
     </div>
@@ -85,5 +94,6 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
 <script src="{{ url_for('static', filename='js/client.js') }}"></script>
 {% endblock %}

@@ -99,15 +99,7 @@ def complete_ticket(ticket_id):
 @api_bp.route('/tickets/<int:ticket_id>/link-telegram', methods=['POST'])
 def link_telegram(ticket_id):
     """Link telegram chat ID to ticket"""
-    data = request.get_json()
-    chat_id = data.get('chat_id')
-    if not chat_id:
-        return jsonify({'error': 'chat_id обязателен'}), 400
-    
-    success, error = QueueService.link_telegram(ticket_id, chat_id)
-    if error:
-        return jsonify({'error': error}), 400
-        
+    # Telegram notifications are disabled
     return jsonify({'success': True})
 
 

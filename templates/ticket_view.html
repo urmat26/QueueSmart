@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}Талон {{ ticket.ticket_number }} — QueueSmart{% endblock %}
+
+{% block content %}
+<div class="ticket-share-container">
+    <div class="ticket-share-card">
+        <div class="ticket-share-header">
+            <span class="ticket-share-badge status-badge status-{{ ticket.status }}" id="ticketStatusBadge">
+                {% if ticket.status == 'waiting' %}В очереди{% elif ticket.status == 'called' %}Вызван!{% elif ticket.status == 'serving' %}Обслуживается{% elif ticket.status == 'completed' %}Обслужен{% elif ticket.status == 'cancelled' %}Отменен{% endif %}
+            </span>
+            <div class="ticket-share-number" id="ticketNumber">{{ ticket.ticket_number }}</div>
+        </div>
+        <div class="ticket-share-body">
+            <div class="ticket-share-info">
+                <div class="info-block">
+                    <span class="info-block-label">Клиент</span>
+                    <span class="info-block-value" id="clientName">{{ ticket.client_name }}</span>
+                </div>
+                <div class="info-block">
+                    <span class="info-block-label">Услуга</span>
+                    <span class="info-block-value" id="serviceName">{{ ticket.service_icon }} {{ ticket.service_name }}</span>
+                </div>
+                <div class="info-block">
+                    <span class="info-block-label">Позиция</span>
+                    <span class="info-block-value" id="ticketPosition">
+                        {% if ticket.status == 'waiting' %}#{{ ticket.position }}{% else %}—{% endif %}
+                    </span>
+                </div>
+                <div class="info-block">
+                    <span class="info-block-label">Ожидание</span>
+                    <span class="info-block-value" id="estimatedWait">
+                        {% if ticket.status == 'waiting' %}~{{ ticket.estimated_wait_minutes }} мин{% else %}—{% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <div class="ticket-qr-box">
+                <canvas id="qrCode" class="qr-canvas"></canvas>
+                <span class="qr-label">Покажите QR-код оператору или отсканируйте для отслеживания на телефоне</span>
+            </div>
+
+            <div class="ticket-share-actions">
+                <button class="btn btn-primary btn-block" onclick="copyTicketLink()">
+                    🔗 Скопировать ссылку
+                </button>
+                <a href="/client" class="btn btn-glass btn-block">Записаться в очередь</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+<script>
+    // Generate QR Code
+    const qr = new QRious({
+        element: document.getElementById('qrCode'),
+        value: window.location.href,
+        size: 180,
+        background: '#ffffff',
+        foreground: '#000000',
+        level: 'H'
+    });
+
+    const statusTranslations = {
+        'waiting': 'В очереди',
+        'called': 'Вызван!',
+        'serving': 'Обслуживается',
+        'completed': 'Обслужен',
+        'cancelled': 'Отменен'
+    };
+
+    function copyTicketLink() {
+        const url = window.location.href;
+        if (navigator.share) {
+            navigator.share({
+                title: 'Мой талон в QueueSmart',
+                text: 'Отслеживайте мою очередь онлайн!',
+                url: url
+            }).catch(err => console.log(err));
+        } else {
+            navigator.clipboard.writeText(url).then(() => {
+                showToast('Ссылка на талон скопирована!', 'success');
+            }).catch(err => {
+                showToast('Не удалось скопировать', 'error');
+            });
+        }
+    }
+
+    async function updateTicketStatus() {
+        try {
+            const res = await fetch(`/api/tickets/{{ token }}`);
+            if (!res.ok) return;
+            const data = await res.json();
+            
+            // Update status badge
+            const badge = document.getElementById('ticketStatusBadge');
+            badge.className = `ticket-share-badge status-badge status-${data.status}`;
+            badge.textContent = statusTranslations[data.status] || data.status;
+
+            // Update position and wait time
+            const posEl = document.getElementById('ticketPosition');
+            const waitEl = document.getElementById('estimatedWait');
+            
+            if (data.status === 'waiting') {
+                posEl.textContent = `#${data.position}`;
+                waitEl.textContent = `~${data.estimated_wait_minutes} мин`;
+            } else {
+                posEl.textContent = '—';
+                waitEl.textContent = '—';
+            }
+
+            if (data.status === 'called') {
+                showToast('Ваша очередь подошла! Пройдите к окну.', 'warning');
+            }
+        } catch(e) {
+            console.error('Ошибка обновления статуса:', e);
+        }
+    }
+
+    // Subscribe to Socket.IO events for real-time updates
+    document.addEventListener('queueUpdate', updateTicketStatus);
+</script>
+{% endblock %}

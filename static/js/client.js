@@ -64,17 +64,40 @@ async function registerInQueue(e) {
             document.getElementById('resultPosition').textContent = `#${data.ticket.position}`;
             document.getElementById('resultWait').textContent = `~${data.ticket.position * 10} мин`;
             
-            // Store current ticket ID for telegram linking
-            window.currentTicketId = data.ticket.id;
+            const shareUrl = window.location.origin + '/ticket/' + data.token;
             
+            // Render QR Code
+            new QRious({
+                element: document.getElementById('resultQrCode'),
+                value: shareUrl,
+                size: 150,
+                background: '#ffffff',
+                foreground: '#000000',
+                level: 'H'
+            });
+
             document.getElementById('trackingLink').innerHTML = `
-                <input type="text" value="${data.token}" class="form-input" readonly onclick="this.select()">
-                <div class="telegram-link-box" style="margin-top:1rem">
-                    <button class="btn btn-sm btn-glass btn-block" onclick="promptTelegramLink()">
-                        ✈️ Уведомить в Telegram
-                    </button>
-                </div>
+                <input type="text" value="${shareUrl}" class="form-input" readonly onclick="this.select()">
             `;
+
+            // Configure action buttons
+            document.getElementById('viewTicketBtn').href = shareUrl;
+            document.getElementById('copyShareBtn').onclick = () => {
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Мой талон в QueueSmart',
+                        text: 'Отслеживайте мою очередь онлайн!',
+                        url: shareUrl
+                    }).catch(err => console.log(err));
+                } else {
+                    navigator.clipboard.writeText(shareUrl).then(() => {
+                        showToast('Ссылка на талон скопирована!', 'success');
+                    }).catch(err => {
+                        showToast('Не удалось скопировать', 'error');
+                    });
+                }
+            };
+            
             showToast('Вы успешно записаны!', 'success');
             if (window.socket) socket.emit('queue_updated');
         } else { showToast(data.error, 'error'); }
@@ -90,26 +113,7 @@ function showRegistration() {
     loadServices();
 }
 
-async function promptTelegramLink() {
-    const chatId = prompt("Введите ваш Telegram Chat ID (можно узнать у бота @userinfobot):");
-    if (!chatId) return;
-    
-    try {
-        const res = await fetch(`/api/tickets/${window.currentTicketId}/link-telegram`, {
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({ chat_id: chatId })
-        });
-        const data = await res.json();
-        if (data.success) {
-            showToast('Telegram успешно привязан!', 'success');
-        } else {
-            showToast(data.error, 'error');
-        }
-    } catch(e) {
-        showToast('Ошибка привязки', 'error');
-    }
-}
+// Telegram link removed
 
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('token')) { document.getElementById('trackToken').value = urlParams.get('token'); trackTicket(); }
